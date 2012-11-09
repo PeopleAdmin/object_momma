@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "object_momma"
   gem.require_paths = ["lib"]
   gem.version       = ObjectMomma::VERSION
+
+  gem.add_development_dependency 'rspec'
 end
