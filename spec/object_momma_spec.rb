@@ -117,6 +117,25 @@ describe ObjectMomma do
     end
   end
 
+  context "An object whose builder is stored in the builder path" do
+    after do
+      ObjectMomma.builder_path = nil
+    end
+
+    it "Loads the builder ruby file from the path only after builder path is set" do
+      lambda {
+        ObjectMomma.spawn_thing("The Thing")
+      }.should raise_error(NoMethodError)
+
+      ObjectMomma.builder_path = File.expand_path("../fixtures", __FILE__)
+
+      thing = ObjectMomma.spawn_thing("The Thing")
+
+      thing.a_property.should       == :foo
+      thing.another_property.should == :bar
+    end
+  end
+
   context ".spawn" do
     it "invokes #spawn_(object_type) for the supplied arguments" do
       ObjectMomma.should_receive(:spawn_user).with("Billy Pilgrim").once

@@ -2,8 +2,16 @@ module ObjectMomma
   module Config
     def self.extended(base)
       base.singleton_class.instance_eval do
+        attr_reader :builder_path
         attr_reader :serialized_attributes_path, :use_serialized_attributes
       end
+    end
+
+    def builder_path=(path)
+      unless path.nil? || File.directory?(path)
+        raise ArgumentError, "`#{path}' is not a valid directory"
+      end
+      @builder_path = path
     end
 
     def serialized_attributes_path=(path)

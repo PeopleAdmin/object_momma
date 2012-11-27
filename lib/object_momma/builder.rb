@@ -59,6 +59,11 @@ module ObjectMomma
     end
 
     def self.builder_for(object_type)
+      if ObjectMomma.builder_path
+        builder_file = File.join(ObjectMomma.builder_path, "#{object_type}_builder.rb")
+        require builder_file if File.size?(builder_file)
+      end
+
       classified_name = "_#{object_type}Builder".gsub(/_\w/) do |underscored|
         underscored[1].upcase
       end
