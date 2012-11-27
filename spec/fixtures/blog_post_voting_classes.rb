@@ -58,11 +58,11 @@ module ObjectMomma
       end
     end
 
-    def build!(user)
+    def build!(user, attributes = {})
       # ActiveRecord's scope returned by #first_or_initialize would do this for
       # us under normal circumstances.
-      user.email     = test_email
-      user.username  = test_username
+      user.email     = attributes[:email]    || test_email
+      user.username  = attributes[:username] || test_username
       user.full_name = child_id
 
       user.save!

@@ -3,7 +3,7 @@ module ObjectMomma
 
   class Child
     attr_accessor :child_id
-    attr_reader :actualize_strategy, :builder
+    attr_reader :actualize_strategy, :builder, :object_type
     alias_method :to_s, :child_id
 
     def initialize(object_type, hash, actualize_strategy)
@@ -15,6 +15,7 @@ module ObjectMomma
 
       @actualize_strategy = actualize_strategy
       @builder            = ObjectMomma.builder_for(object_type).new(self)
+      @object_type        = object_type
 
       builder.build_child_from_hash(hash) do |sibling_object_type, sibling_id|
         self.class.new(sibling_object_type, sibling_id, @actualize_strategy)
@@ -61,7 +62,14 @@ module ObjectMomma
           raise ObjectMomma::ObjectNotFound, "Child `#{child_id}' created by "\
             "`#{builder.class.name}' does not yet exist"
         end
-        builder.build!(object)
+
+        # arity of -2: def build(object, attrs = {})   (optional)
+        # arity of 2:  def build(object, attrs)        (required)
+        if [-2, 2].include?(builder.method(:build!).arity)
+          builder.build!(object, attributes_for_child)
+        else
+          builder.build!(object)
+        end
 
         unless builder.is_persisted?(object)
           raise ObjectMomma::NotPersisted, "Child `#{child_id}' was created "\
@@ -74,6 +82,45 @@ module ObjectMomma
       end
 
       object
+    end
+
+    def attributes_for_child
+      return {} unless ObjectMomma.use_serialized_attributes
+
+      # Pluralize
+      if object_type.to_s.chars.to_a.last == "s"
+        file_name = object_type
+      else
+        file_name = "#{object_type}s"
+      end
+
+      path = File.join(ObjectMomma.serialized_attributes_path, "#{file_name}.yml")
+
+      if File.size?(path)
+        File.open(path) do |yml_file|
+          attributes_by_child_id = YAML::load(yml_file)
+          return recursively_symbolize_hash(attributes_by_child_id.fetch(child_id, {}))
+        end
+      end
+
+      {}
+    end
+
+    def recursively_symbolize_hash(hash = {})
+      recurse = lambda { |in_hash|
+        {}.tap do |out_hash|
+          in_hash.each do |key, in_value|
+            out_value = in_value.is_a?(Hash) ? recurse.call(in_value) : in_value.dup
+            if key.respond_to?(:to_sym)
+              out_hash[key.to_sym] = out_value
+            else
+              out_hash[key] = out_value
+            end
+          end
+        end
+      }
+
+      recurse.call(hash)
     end
   end
 end

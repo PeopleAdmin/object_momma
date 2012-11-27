@@ -146,6 +146,33 @@ The only requirement ObjectMomma imposes on the objects that are spawned via you
 
 Your builder's `first_or_initialize` method can return a Scope, as well. ObjectMomma will simply call `first_or_initialize` for you.
 
+### Serialized Attributes
+
+Supplying all the fictional data for your different children can be tedious and ugly. You may want to store canned attributes for your objects in YAML files, similar to fixtures. This features is completely optional. The attributes will get passed to your builders' #build! method as the second argument. An empty hash will be supplied if ObjectMomma couldn't find and parse the attributes for you. Example:
+
+    # spec/object_momma/user_builder.rb
+    class ObjectMomma::UserBuilder
+      …
+      
+      def build!(user, attributes)
+        user.attributes = attributes
+      end
+      
+      …
+    end
+
+The YAML file:
+
+    # spec/object_momma/attributes/users.yml
+    Scott Pilgrim:
+      username: "scott_pilgrim"
+      email:    "spilgrim@zz.zzz"
+
+To use:
+
+    => ObjectMother.spawn("Scott Pilgrim")
+    -> #<User:0xdeadbeef @username="scott_pilgrim", @email="spilgrim@zz.zzz", …>
+
 ### Business in the front, party in the back
 
 If you'd like to refer to ObjectMomma via the constant ObjectMother, then have it your way:

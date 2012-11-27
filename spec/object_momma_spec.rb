@@ -99,6 +99,24 @@ describe ObjectMomma do
     end
   end
 
+  context "An object with serialized attributes" do
+    before do
+      ObjectMomma.use_serialized_attributes  = true
+      ObjectMomma.serialized_attributes_path = File.expand_path("../fixtures", __FILE__)
+    end
+
+    after do
+      ObjectMomma.use_serialized_attributes  = false
+    end
+
+    let(:user) { ObjectMomma.spawn_user("Scott Pilgrim") }
+
+    it "pulls in the attributes and loads them into the object" do
+      user.email.should    == "foobar@zz.zzz"
+      user.username.should == "lovemuscle23"
+    end
+  end
+
   context ".spawn" do
     it "invokes #spawn_(object_type) for the supplied arguments" do
       ObjectMomma.should_receive(:spawn_user).with("Billy Pilgrim").once
