@@ -9,43 +9,18 @@ describe ObjectMomma do
     Vote.destroy_all
   end
 
-  # Users
-  shared_examples_for "Scott Pilgrim" do
-    it("is a User") { user.should be_a(User) }
-    it("has its' email set properly") { user.email.should == "scottpilgrim@zz.zzz" }
-    it("has its' username set properly") { user.username.should == "scottpilgrim" }
-    it("is persisted") { user ; ObjectMomma.find_user("Scott Pilgrim") }
-  end
-
-  # Posts
-  shared_examples_for "Post about Comic Books" do
-    it("is a Post") { post.should be_a(Post) }
-    it("has its' title set properly") { post.title.should == "Batman" }
-    it("has its' subject set properly") { post.subject.should == "Comic Books" }
-    it("is persisted") { post ; ObjectMomma.find_post("Post about Comic Books") }
-  end
-
-  # Comments
-  shared_examples_for "Scott Pilgrim's Comment on Post about Comic Books" do
-    it("is a Comment") { comment.should be_a(Comment) }
-    it("has its' user set properly") do
-      comment.user.object_id.should == ObjectMomma.find_user("Scott Pilgrim").object_id
-    end
-    it("has its' post set properly") do
-      comment.post.object_id.should == ObjectMomma.find_post("Post about Comic Books").object_id
-    end
-    it("is persisted") do
-      comment
-      ObjectMomma.find_comment("Scott Pilgrim's Comment on Post about Comic Books")
-    end
-  end
-
-  # Votes
   let(:vote_child_id) do
     "Billy Pilgrim's Upvote for Scott Pilgrim's Comment on Post about Comic Books"
   end
 
   context "A simple object type (User)" do
+    shared_examples_for "Scott Pilgrim" do
+      it("is a User") { user.should be_a(User) }
+      it("has its' email set properly") { user.email.should == "scottpilgrim@zz.zzz" }
+      it("has its' username set properly") { user.username.should == "scottpilgrim" }
+      it("is persisted") { user ; ObjectMomma.find_user("Scott Pilgrim") }
+    end
+
     context "when instantiated with a Hash" do
       let(:user) { ObjectMomma.spawn_user(child_id: "Scott Pilgrim") }
       it_behaves_like "Scott Pilgrim"
@@ -58,6 +33,13 @@ describe ObjectMomma do
   end
 
   context "An object type that has a child id constructor (Post)" do
+    shared_examples_for "Post about Comic Books" do
+      it("is a Post") { post.should be_a(Post) }
+      it("has its' title set properly") { post.title.should == "Batman" }
+      it("has its' subject set properly") { post.subject.should == "Comic Books" }
+      it("is persisted") { post ; ObjectMomma.find_post("Post about Comic Books") }
+    end
+    
     context "when instantiated with a Hash" do
       let(:post) { ObjectMomma.spawn_post(subject: "Comic Books") }
       it_behaves_like "Post about Comic Books"
@@ -70,6 +52,20 @@ describe ObjectMomma do
   end
 
   context "An object with simple siblings (Comment)" do
+    shared_examples_for "Scott Pilgrim's Comment on Post about Comic Books" do
+      it("is a Comment") { comment.should be_a(Comment) }
+      it("has its' user set properly") do
+        comment.user.object_id.should == ObjectMomma.find_user("Scott Pilgrim").object_id
+      end
+      it("has its' post set properly") do
+        comment.post.object_id.should == ObjectMomma.find_post("Post about Comic Books").object_id
+      end
+      it("is persisted") do
+        comment
+        ObjectMomma.find_comment("Scott Pilgrim's Comment on Post about Comic Books")
+      end
+    end
+    
     context "when instantiated with a Hash" do
       let(:comment) do
         ObjectMomma.spawn_comment({
