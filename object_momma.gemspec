@@ -4,8 +4,8 @@ require File.expand_path('../lib/object_momma/version', __FILE__)
 Gem::Specification.new do |gem|
   gem.authors       = ["ntl"]
   gem.email         = ["nathanladd@gmail.com"]
-  gem.description   = %q{TODO: Write a gem description}
-  gem.summary       = %q{TODO: Write a gem summary}
+  gem.description   = %q{object_momma is an Object Mother implementation in ruby}
+  gem.summary       = %q{object_momma is an Object Mother implementation in ruby}
   gem.homepage      = ""
 
   gem.files         = `git ls-files`.split($\)
