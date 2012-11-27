@@ -1,4 +1,4 @@
-require 'ostruct'
+require 'yaml'
 
 require 'object_momma/class_attributes'
 
