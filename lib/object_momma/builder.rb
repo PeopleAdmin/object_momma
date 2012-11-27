@@ -37,7 +37,7 @@ module ObjectMomma
       end
     end
 
-    def build!
+    def build!(*args)
       raise Objectmomma::SubclassNotImplemented
     end
 
