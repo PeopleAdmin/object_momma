@@ -192,6 +192,6 @@ ObjectMomma was written by Nathan Ladd, with help from a few partners in crime:
  * Josh Flanagan (jflanagan on github)
  * Theo Mills
 
-And, of course, I read about the ObjectMother pattern that I ruined^H^H^H^Himplemented from:
+And, of course, I read about the ObjectMother pattern that I ~~ruined~~ implemented from:
 
  * Martin Fowler
