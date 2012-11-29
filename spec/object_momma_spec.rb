@@ -151,13 +151,9 @@ describe ObjectMomma do
       end
     end
 
-    it "defines ObjectMother" do
+    it "defines ObjectMother to be equal to ObjectMomma" do
       Object.const_defined?(:ObjectMother).should be_true
-    end
-
-    it "delegates everything to ObjectMomma" do
-      ObjectMomma.should_receive(:fizzle).with(:shizzle)
-      ObjectMother.fizzle(:shizzle)
+      ObjectMother.should eql(ObjectMomma)
     end
   end
 

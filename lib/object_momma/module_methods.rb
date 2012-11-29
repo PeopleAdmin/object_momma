@@ -25,13 +25,7 @@ module ObjectMomma
     def mullet!
       return false if Object.const_defined?(:ObjectMother)
 
-      object_mother = Class.new(BasicObject) do
-        def self.method_missing(*args)
-          ObjectMomma.send(*args)
-        end
-      end
-
-      Object.const_set(:ObjectMother, object_mother)
+      Object.const_set(:ObjectMother, ObjectMomma)
       true
     end
 
