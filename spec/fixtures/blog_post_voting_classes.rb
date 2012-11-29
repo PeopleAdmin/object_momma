@@ -4,49 +4,49 @@ File.dirname(__FILE__).tap do |current_directory|
   end
 end
 
-module ObjectMomma
-  class VoteBuilder < Builder
-    has_siblings :comment, :voter => :user
-    child_id { "#{voter}'s #{vote_type} for #{comment}" }
+class VoteBuilder < ObjectMomma::Builder
+  has_siblings :comment, :voter => :user
+  child_id { "#{voter}'s #{vote_type} for #{comment}" }
 
-    def first_or_initialize
-      Vote.where({
-        comment_id: comment.id,
-        user_id:    voter.id,
-        type:       vote_type.downcase
-      })
-    end
-
-    def decorate(vote)
-      # The regular Vote class doesn't implement this method, but Vote objects
-      # instantiated via ObjectMomma will get this behavior. Be careful with
-      # this feature, it can make a mess!
-      def vote.switch_vote!
-        if upvote?
-          self.type = 'downvote'
-        else
-          self.type = 'upvote'
-        end
-      end
-    end
-    
-    def build!(vote)
-      # This is demonstration only. In a real ActiveRecord scenario, that
-      # scope returned by #first_or_initialize would have set this stuff for
-      # us. It may be possible to automatically do this in a generic way.
-      vote.comment = self.comment
-      vote.type    = self.vote_type
-      vote.user    = self.voter
-
-      # This is basic "set my data according to who I am" logic:
-      if vote.user.politician?
-        vote.switch_vote!
-      end
-
-      vote.save!
-    end
+  def first_or_initialize
+    Vote.where({
+      comment_id: comment.id,
+      user_id:    voter.id,
+      type:       vote_type.downcase
+    })
   end
 
+  def decorate(vote)
+    # The regular Vote class doesn't implement this method, but Vote objects
+    # instantiated via ObjectMomma will get this behavior. Be careful with
+    # this feature, it can make a mess!
+    def vote.switch_vote!
+      if upvote?
+        self.type = 'downvote'
+      else
+        self.type = 'upvote'
+      end
+    end
+  end
+  
+  def build!(vote)
+    # This is demonstration only. In a real ActiveRecord scenario, that
+    # scope returned by #first_or_initialize would have set this stuff for
+    # us. It may be possible to automatically do this in a generic way.
+    vote.comment = self.comment
+    vote.type    = self.vote_type
+    vote.user    = self.voter
+
+    # This is basic "set my data according to who I am" logic:
+    if vote.user.politician?
+      vote.switch_vote!
+    end
+
+    vote.save!
+  end
+end
+
+module ObjectMomma
   class UserBuilder < Builder
     def first_or_initialize
       User.where(email: test_email)

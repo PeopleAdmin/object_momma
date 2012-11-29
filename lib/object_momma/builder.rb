@@ -63,7 +63,11 @@ module ObjectMomma
         underscored[1].upcase
       end
 
-      ObjectMomma.const_get(classified_name)
+      begin
+        ObjectMomma.const_get(classified_name, false)
+      rescue NameError => ne
+        Object.const_get(classified_name, false)
+      end
     end
 
     def self.has_child_id_serializer?
