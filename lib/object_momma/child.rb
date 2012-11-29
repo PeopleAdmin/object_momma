@@ -108,7 +108,14 @@ module ObjectMomma
       recurse = lambda { |in_hash|
         {}.tap do |out_hash|
           in_hash.each do |key, in_value|
-            out_value = in_value.is_a?(Hash) ? recurse.call(in_value) : in_value.dup
+            if in_value.is_a?(Hash)
+              out_value = recurse.call(in_value)
+            elsif in_value.respond_to?(:dup)
+              out_value = in_value.dup
+            else
+              out_value = in_value
+            end
+
             if key.respond_to?(:to_sym)
               out_hash[key.to_sym] = out_value
             else
