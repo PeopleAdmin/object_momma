@@ -7,6 +7,13 @@ module ObjectMomma
     def method_missing(method_name, *args, &block)
       return super unless respond_to?(method_name)
       return super if block_given?
+      
+      object_type = object_type_from_attributes_getter(method_name)
+      if object_type
+        args.push(:find_or_create)
+        child = ObjectMomma::Child.new(object_type, *args)
+        return child.attributes_for_child
+      end
 
       object_type, actualize_strategy = object_type_and_actualize_strategy_from_method_name(method_name)
       args.push(actualize_strategy)
@@ -26,6 +33,21 @@ module ObjectMomma
 
       Object.const_set(:ObjectMother, object_mother)
       true
+    end
+
+    def object_type_from_attributes_getter(method_name)
+      return nil unless ObjectMomma.use_serialized_attributes
+      match = method_name.to_s.match(%r{^(\w+)_attributes$}).to_a[1..-1]
+      return nil unless match
+
+      object_type = match[0]
+
+      begin
+        builder_for(object_type)
+        object_type
+      rescue NameError
+        nil
+      end
     end
 
     def object_type_and_actualize_strategy_from_method_name(method_name)
@@ -57,6 +79,7 @@ module ObjectMomma
 
     def respond_to?(method_name, *args)
       return true if super
+      return true if object_type_from_attributes_getter(method_name)
       parse_method_name(method_name).nil? ? false : true
     end
 

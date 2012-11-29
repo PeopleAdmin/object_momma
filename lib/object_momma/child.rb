@@ -6,6 +6,26 @@ module ObjectMomma
     attr_reader :actualize_strategy, :builder, :object_type
     alias_method :to_s, :child_id
 
+    def attributes_for_child
+      return {} unless ObjectMomma.use_serialized_attributes
+
+      # Pluralize
+      if object_type.to_s.chars.to_a.last == "s"
+        file_name = object_type
+      else
+        file_name = "#{object_type}s"
+      end
+
+      path = File.join(ObjectMomma.serialized_attributes_path, "#{file_name}.yml")
+
+      if File.size?(path)
+        attributes_by_child_id = YAML::load(ERB.new(File.read(path)).result)
+        return recursively_symbolize_hash(attributes_by_child_id.fetch(child_id, {}))
+      end
+
+      {}
+    end
+
     def initialize(object_type, hash, actualize_strategy)
       unless ACTUALIZE_STRATEGIES.include?(actualize_strategy)
         raise ArgumentError, "Invalid actualize strategy "\
@@ -82,26 +102,6 @@ module ObjectMomma
       end
 
       object
-    end
-
-    def attributes_for_child
-      return {} unless ObjectMomma.use_serialized_attributes
-
-      # Pluralize
-      if object_type.to_s.chars.to_a.last == "s"
-        file_name = object_type
-      else
-        file_name = "#{object_type}s"
-      end
-
-      path = File.join(ObjectMomma.serialized_attributes_path, "#{file_name}.yml")
-
-      if File.size?(path)
-        attributes_by_child_id = YAML::load(ERB.new(File.read(path)).result)
-        return recursively_symbolize_hash(attributes_by_child_id.fetch(child_id, {}))
-      end
-
-      {}
     end
 
     def recursively_symbolize_hash(hash = {})

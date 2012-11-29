@@ -220,4 +220,16 @@ describe ObjectMomma do
       }.should_not raise_error(ObjectMomma::ObjectExists)
     end
   end
+
+  context ".(object_type)_attributes" do
+    before { ObjectMomma.use_serialized_attributes = true }
+    after  { ObjectMomma.use_serialized_attributes = false }
+
+    it "returns a symbolized hash from the yml file corresponding to the object type" do
+      ObjectMomma.user_attributes("Scott Pilgrim").should == {
+        email:    "foobar@zz.zzz",
+        username: "lovemuscle23"
+      }
+    end
+  end
 end
