@@ -11,7 +11,12 @@ module ObjectMomma
     end
 
     def inherited(subclass)
-      @class_attributes.each do |attribute|
+      @class_attributes.compact.each do |attribute|
+        subclass.class_attribute attribute
+
+        value = self.send(attribute)
+        next if value.nil?
+
         subclass.send("#{attribute}=", self.send(attribute))
       end
     end
