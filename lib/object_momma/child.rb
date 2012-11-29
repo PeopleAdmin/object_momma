@@ -97,10 +97,8 @@ module ObjectMomma
       path = File.join(ObjectMomma.serialized_attributes_path, "#{file_name}.yml")
 
       if File.size?(path)
-        File.open(path) do |yml_file|
-          attributes_by_child_id = YAML::load(yml_file)
-          return recursively_symbolize_hash(attributes_by_child_id.fetch(child_id, {}))
-        end
+        attributes_by_child_id = YAML::load(ERB.new(File.read(path)).result)
+        return recursively_symbolize_hash(attributes_by_child_id.fetch(child_id, {}))
       end
 
       {}
