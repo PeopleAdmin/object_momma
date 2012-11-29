@@ -1,3 +1,4 @@
 Scott Pilgrim:
   email:    foobar@zz.zzz
+  id:       3
   username: <%= "lovemuscle23" %>

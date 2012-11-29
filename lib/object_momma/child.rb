@@ -110,10 +110,13 @@ module ObjectMomma
           in_hash.each do |key, in_value|
             if in_value.is_a?(Hash)
               out_value = recurse.call(in_value)
-            elsif in_value.respond_to?(:dup)
-              out_value = in_value.dup
             else
-              out_value = in_value
+              begin
+                out_value = in_value.dup
+              rescue TypeError => te
+                # TypeError is raised when you try and #dup a Fixnum or Symbol
+                out_value = in_value
+              end
             end
 
             if key.respond_to?(:to_sym)

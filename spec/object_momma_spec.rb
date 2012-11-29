@@ -228,6 +228,7 @@ describe ObjectMomma do
     it "returns a symbolized hash from the yml file corresponding to the object type" do
       ObjectMomma.user_attributes("Scott Pilgrim").should == {
         email:    "foobar@zz.zzz",
+        id:       3,
         username: "lovemuscle23"
       }
     end
