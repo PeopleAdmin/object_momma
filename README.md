@@ -75,17 +75,18 @@ Some objects are composed of other objects, and they can actually nest those chi
     => comment = ObjectMomma.spawn_comment("Joe Schmoe's Comment on the Post about Birds")
     => comment = ObjectMomma.spawn_comment(user: "Joe Schmoe", post: "Birds")
 
-`ObjectMomma.spawn_*` will raise an `ObjectMomma::ObjectExists` exception if the object has already been spawned. To simply return the object if it does exist, omit the `spawn_` and invoke ObjectMomma thusly:
+`ObjectMomma.create_*` will raise an `ObjectMomma::ObjectExists` exception if the object has already been spawned.
 
-    => ObjectMomma.spawn("Joe Schmoe") # Works the first time
-    => ObjectMomma.spawn("Joe Schmoe") # Now raises an ObjectExists exception
-    => ObjectMomma.user("Joe Schmoe")  # Works fine :)
+    => ObjectMomma.create_user("Joe Schmoe") # Works the first time
+    => ObjectMomma.create_user("Joe Schmoe") # Now raises an ObjectExists exception
+    => ObjectMomma.spawn_user("Joe Schmoe")  # Works fine :)
+    => ObjectMomma.user("Joe Schmoe")
 
 If you want to raise an error if the object *doesn't* exist, then `ObjectMomma.find_*` will raise an `ObjectMomma::ObjectNotFound` exception in that case:
 
-    => ObjectMomma.find("Joe Schmoe")  # Raises ObjectNotFound exception
-    => ObjectMomma.spawn("Joe Schmoe") # Works fine :)
-    => ObjectMomma.find("Joe Schmoe")  # Does not raise exception
+    => ObjectMomma.find_user("Joe Schmoe")  # Raises ObjectNotFound exception
+    => ObjectMomma.spawn_user("Joe Schmoe") # Works fine :)
+    => ObjectMomma.find_user("Joe Schmoe")  # Does not raise exception
 
 You can also build a bunch of objects all at once with `ObjectMomma.spawn`:
 
