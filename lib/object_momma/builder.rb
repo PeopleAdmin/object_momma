@@ -38,7 +38,7 @@ module ObjectMomma
     end
 
     def build!(*args)
-      raise Objectmomma::SubclassNotImplemented
+      raise ObjectMomma::SubclassNotImplemented
     end
 
     def child_id
