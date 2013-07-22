@@ -52,7 +52,7 @@ and run `bundle install` from your shell.
     class CommentModeration < ActionController::IntegrationTest
       def setup
         @post = ObjectMomma.post("Birds")
-        ObjectMomma.spawn_post("Joe Schmoe's Comment on the Post About Birds")
+        ObjectMomma.spawn_comment("Joe Schmoe's Comment on the Post About Birds")
       end
       
       def test_upvoting_a_comment
